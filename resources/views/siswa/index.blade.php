@@ -4,23 +4,14 @@
 <div class="main">
     <div class="main-content">
         <div class="container-fluid">
-            @if(session('sukses'))
-                <div class="alert alert-success" role="alert">
-                    {{session('sukses')}}
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="alert alert-danger" role="alert">
-                    {{session('error')}}
-                </div>
-            @endif
             <div class="row">
                 <div class="col-md-12">
                     <div class="panel">
                         <div class="panel-heading">
                             <h3 class="panel-title">Data Siswa</h3>
                             <div class="right">
+                                <a href="/siswa/exportExcel" class="btn"><i class="fa fa-file-excel-o" aria-hidden="true"></i></a>
+                                <a href="/siswa/exportPdf" class="btn"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
                                 <button type="button" class="btn" data-toggle="modal" data-target="#exampleModal">
                                     <i class="lnr lnr-plus-circle"></i></button>
                             </div>
@@ -34,6 +25,7 @@
                                         <th>JENIS KELAMIN</th>
                                         <th>AGAMA</th>
                                         <th>ALAMAT</th>
+                                        <th>NILAI RATA-RATA</th>
                                         <th>AKSI</th>
                                     </tr>
                                 </thead>
@@ -45,9 +37,10 @@
                                         <td>{{$siswa->jenis_kelamin}}</td>
                                         <td>{{$siswa->agama}}</td>
                                         <td>{{$siswa->alamat}}</td>
+                                        <td>{{$siswa->rataRataNilai()}}</td>
                                         <td>
                                             <a href="/siswa/{{$siswa->id}}/edit" class="btn btn-warning btn-sm">Edit</a>
-                                            <a href="/siswa/{{$siswa->id}}/delete" class="btn btn-danger btn-sm" onclick="return confirm('Yakin Hapus Data?')">Delete</a>
+                                            <a href="#" class="btn btn-danger btn-sm delete" siswa-id="{{$siswa->id}}">Delete</a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -127,4 +120,25 @@
         </div>
     </div>
 </div>
+@stop
+
+@section('footer')
+    <script>
+        $('.delete').click(function(){
+            var siswa_id = $(this).attr('siswa-id');
+            swal({
+                title: "Yakin?",
+                text: "Anda akan hapus data siswa dengan id "+siswa_id + "!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                })
+                .then((willDelete) => {
+                    console.log(willDelete);
+                    if (willDelete) {
+                     window.location= "/siswa/"+siswa_id+"/delete";
+                    }
+                });
+            });
+    </script>
 @stop

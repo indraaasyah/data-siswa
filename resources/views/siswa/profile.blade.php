@@ -1,5 +1,9 @@
 @extends('layouts.master')
 
+@section('header')
+<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+@stop
+
 @section('content')
 <div class="main">
     <!-- MAIN CONTENT -->
@@ -34,10 +38,10 @@
                                         {{$siswa->mapel->count()}} <span>Mata Pelajaran</span>
                                     </div>
                                     <div class="col-md-4 stat-item">
-                                        15 <span>Awards</span>
+                                        {{$siswa->rataRataNilai()}} <span>Rata-Rata Nilai</span>
                                     </div>
                                     <div class="col-md-4 stat-item">
-                                        2174 <span>Points</span>
+                                        2174 <span>Ranking</span>
                                     </div>
                                 </div>
                             </div>
@@ -76,6 +80,8 @@
                                             <th>NAMA</th>
                                             <th>SEMESTER</th>
                                             <th>NILAI</th>
+                                            <th>GURU</th>
+                                            <th>AKSI</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -84,13 +90,17 @@
                                             <td>{{$mapel->kode}}</td>
                                             <td>{{$mapel->nama}}</td>
                                             <td>{{$mapel->semester}}</td>
-                                            <td>{{$mapel->pivot->nilai}}</td>
+                                            <!-- Di bawah ini menggunakan ajax jquery -->
+                                            <td><a href="#" class="nilai" data-type="text" data-pk="{{$mapel->id}}" data-url="/api/siswa/{{$siswa->id}}/editnilai" data-title="Masukkan Nilai">{{$mapel->pivot->nilai}}</a></td>
+                                            <td><a href="/guru/{{$mapel->guru_id}}/profile">{{$mapel->guru->nama}}</a></td>
+                                            <td><a href="/siswa/{{$siswa->id}}/{{$mapel->id}}/deletenilai" class="btn btn-danger btn-sm" onclick="return confirm('Yakin Hapus Data?')">Delete</a></td>
                                         </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                        <!-- Di bawah ini untuk menampilkan chart -->
                         <div class="panel">
                             <div id="chartNilai">
                             </div>
@@ -141,8 +151,10 @@
 @stop
 
 @section('footer')
+<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script>
+
     Highcharts.chart('chartNilai', {
         chart: {
             type: 'column'
@@ -180,6 +192,11 @@
             data: {!!json_encode($data)!!}
 
         }]
+    });
+
+    
+    $(document).ready(function() {
+        $('.nilai').editable();
     });
 </script>
 @stop
